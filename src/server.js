@@ -38,14 +38,14 @@ export const setupServer = () => {
   });
 
   // 4. Middleware для обработки несуществующих маршрутов (404)
-  app.use((req, res, next) => {
+  app.use((req, res) => {
     res.status(404).json({
       message: 'Route not found',
     });
   });
 
   // 5. Middleware для обработки ошибок (500)
-  app.use((err, req, res, next) => {
+  app.use((err, req, res) => {
     res.status(500).json({
       message: err.message || 'Internal Server Error',
     });
