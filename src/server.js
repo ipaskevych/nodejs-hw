@@ -45,7 +45,8 @@ export const setupServer = () => {
   });
 
   // 5. Middleware для обработки ошибок (500)
-  app.use((err, req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
     res.status(500).json({
       message: err.message || 'Internal Server Error',
     });
