@@ -8,13 +8,11 @@ export const connectMongoDB = async () => {
       throw new Error('MONGO_URL environment variable is not defined');
     }
 
-    // Подключаемся к MongoDB с помощью mongoose
     await mongoose.connect(mongoUrl);
-
-    // Строгое требование из задания по выводу сообщения:
     console.log('✅ MongoDB connection established successfully');
   } catch (error) {
     console.error('Error while setting up mongo connection', error);
-    throw error;
+    // Добавлено аварийное завершение процесса по требованию ментора:
+    process.exit(1);
   }
 };

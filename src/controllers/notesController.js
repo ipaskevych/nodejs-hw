@@ -59,8 +59,12 @@ export const updateNote = async (req, res, next) => {
   try {
     const { noteId } = req.params;
 
-    // { new: true } возвращает уже обновленный документ из базы данных
-    const updatedNote = await Note.findByIdAndUpdate(noteId, req.body, { new: true });
+    // Заменено { new: true } на { returnDocument: 'after' }:
+    const updatedNote = await Note.findByIdAndUpdate(
+      noteId,
+      req.body,
+      { returnDocument: 'after' }
+    );
 
     if (!updatedNote) {
       throw createHttpError(404, 'Note not found');
