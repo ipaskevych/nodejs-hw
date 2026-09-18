@@ -17,7 +17,6 @@ const noteSchema = new Schema(
       type: String,
       enum: TAGS,       // 2. Используем импортированную константу
       default: 'Todo',
-      required: true,
       index: true,      // 3. ДОБАВИЛИ ИНДЕКС, как требует задание!
     },
   },
