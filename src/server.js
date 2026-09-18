@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { errors } from 'celebrate'; // 1. Импортируем обработчик ошибок celebrate
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
@@ -21,13 +22,16 @@ export const setupServer = async () => {
     app.use(express.json());
     app.use(logger); // Логгер из внешнего файла
 
-    // 3. Регистрация маршрутов (без вынесения части пути /notes здесь!)
+    // 3. Регистрация маршрутов
     app.use(notesRouter);
 
-    // 4. Обработка несуществующих маршрутов (404)
+    // 4. ОБРАБОТКА ОШИБОК ВАЛИДАЦИИ CELEBRATE (Вставляем строго здесь!)
+    app.use(errors());
+
+    // 5. Обработка несуществующих маршрутов (404)
     app.use(notFoundHandler);
 
-    // 5. Глобальный обработчик ошибок (500)
+    // 6. Глобальный обработчик ошибок (500)
     app.use(errorHandler);
 
     const PORT = process.env.PORT || 3000;

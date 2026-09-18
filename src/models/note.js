@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import { TAGS } from '../constants/tags.js'; // 1. Импортируем массив тегов
 
 const noteSchema = new Schema(
   {
@@ -14,13 +15,10 @@ const noteSchema = new Schema(
     },
     tag: {
       type: String,
-      enum: [
-        'Work', 'Personal', 'Meeting', 'Shopping',
-        'Ideas', 'Travel', 'Finance', 'Health',
-        'Important', 'Todo'
-      ],
+      enum: TAGS,       // 2. Используем импортированную константу
       default: 'Todo',
       required: true,
+      index: true,      // 3. ДОБАВИЛИ ИНДЕКС, как требует задание!
     },
   },
   {
