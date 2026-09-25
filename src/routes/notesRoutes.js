@@ -1,5 +1,7 @@
+// src/routes/notesRoutes.js
 import { Router } from 'express';
-import { celebrate } from 'celebrate'; // Импортируем celebrate
+import { celebrate } from 'celebrate';
+import { authenticate } from '../middleware/authenticate.js'; // <-- Добавили импорт
 import {
   getAllNotes,
   getNoteById,
@@ -12,11 +14,14 @@ import {
   noteIdSchema,
   createNoteSchema,
   updateNoteSchema
-} from '../validations/notesValidation.js'; // Импортируем наши схемы валидации
+} from '../validations/notesValidation.js';
 
 const router = Router();
 
-// Применяем валидацию к каждому маршруту перед вызовом контроллера
+// Применяем middleware аутентификации ко ВСЕМ роутам ниже
+router.use(authenticate); // <-- Защищает все эндпоинты заметок разом
+
+// Маршруты с валидацией и контроллерами
 router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
 router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);
 router.post('/notes', celebrate(createNoteSchema), createNote);

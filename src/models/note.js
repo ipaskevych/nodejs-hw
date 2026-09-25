@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { TAGS } from '../constants/tags.js'; // 1. Импортируем массив тегов
+import { TAGS } from '../constants/tags.js';
 
 const noteSchema = new Schema(
   {
@@ -15,14 +15,19 @@ const noteSchema = new Schema(
     },
     tag: {
       type: String,
-      enum: TAGS,       // 2. Используем импортированную константу
+      enum: TAGS,
       default: 'Todo',
-      index: true,      // 3. ДОБАВИЛИ ИНДЕКС, как требует задание!
+      index: true,
+    },
+    userId: { // <-- Добавили поле связи с пользователем
+      type: Schema.Types.ObjectId,
+      ref: 'user', // Должно совпадать с именем модели в User (у нас это 'user')
+      required: true,
     },
   },
   {
-    timestamps: true, // Автоматически добавляет createdAt и updatedAt
-    versionKey: false, // Убирает техническое поле __v
+    timestamps: true,
+    versionKey: false,
   }
 );
 
