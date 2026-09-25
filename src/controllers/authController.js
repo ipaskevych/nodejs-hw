@@ -65,6 +65,7 @@ export const loginUser = async (req, res, next) => {
 };
 
 // 3. ОНОВЛЕННЯ СЕСІЇ
+// Знаходимо refreshUserSession у src/controllers/authController.js і замінюємо її:
 export const refreshUserSession = async (req, res, next) => {
   try {
     const { sessionId, refreshToken } = req.cookies;
@@ -77,11 +78,26 @@ export const refreshUserSession = async (req, res, next) => {
 
     // Перевіряємо, чи не прострочений refresh-токен
     const isRefreshTokenExpired = new Date() > new Date(session.refreshTokenValidUntil);
+
     if (isRefreshTokenExpired) {
+      // 1. Спочатку видаляємо застарілу сесію з бази даних
+      await Session.deleteOne({ _id: sessionId });
+
+      // 2. Очищаємо всі куки в браузері користувача
+      const cookieOptions = {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      };
+      res.clearCookie('accessToken', cookieOptions);
+      res.clearCookie('refreshToken', cookieOptions);
+      res.clearCookie('sessionId', cookieOptions);
+
+      // 3. Лише після цього викидаємо помилку 401
       throw createHttpError(401, 'Session token expired');
     }
 
-    // Видаляємо стару сесію з бази
+    // Видаляємо стару успішну сесію з бази, бо зараз створимо нову
     await Session.deleteOne({ _id: sessionId });
 
     // Створюємо нову сесію і додаємо нові кукі

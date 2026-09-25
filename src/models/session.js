@@ -3,11 +3,12 @@ import { Schema, model } from 'mongoose';
 
 const sessionSchema = new Schema(
   {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'user',
-      required: true,
-    },
+    // Находим поле userId и меняем ref на 'User' с большой буквы:
+userId: {
+  type: Schema.Types.ObjectId,
+  ref: 'User', // <-- ИСПРАВИЛИ
+  required: true,
+},
     accessToken: {
       type: String,
       required: true,

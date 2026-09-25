@@ -2,33 +2,43 @@ import createHttpError from 'http-errors';
 import { Note } from '../models/note.js';
 
 // 1. GET /notes — Отримувати лише нотатки, що належать поточному користувачу
+// Полностью заменяем только метод getAllNotes:
+
 export const getAllNotes = async (req, res, next) => {
   try {
     const { tag, search, page, perPage } = req.query;
 
     const parsedPage = parseInt(page, 10);
     const parsedPerPage = parseInt(perPage, 10);
-
-    // Додаємо userId до об'єкта фільтрації, щоб користувач бачив лише свої нотатки
-    const query = { userId: req.user._id };
-
-    if (tag) {
-      query.tag = tag;
-    }
-
-    if (search) {
-      query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { content: { $regex: search, $options: 'i' } },
-      ];
-    }
-
     const skip = (parsedPage - 1) * parsedPerPage;
 
-    const [notes, totalNotes] = await Promise.all([
-      Note.find(query).skip(skip).limit(parsedPerPage),
-      Note.countDocuments(query),
-    ]);
+    // 1. Инициализируем базовый запрос Mongoose, фильтруя только по userId владельца
+    const notesQuery = Note.find().where('userId').equals(req.user._id);
+    const countQuery = Note.countDocuments().where('userId').equals(req.user._id);
+
+    // 2. Динамически добавляем фильтр по тегу через .where().equals()
+    if (tag) {
+      notesQuery.where('tag').equals(tag);
+      countQuery.where('tag').equals(tag);
+    }
+
+    // 3. Динамически добавляем поиск через оператор $or в метод .where()
+    if (search) {
+      const searchFilter = {
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { content: { $regex: search, $options: 'i' } },
+        ],
+      };
+      notesQuery.where(searchFilter);
+      countQuery.where(searchFilter);
+    }
+
+    // 4. Добавляем пагинацию к основному запросу
+    notesQuery.skip(skip).limit(parsedPerPage);
+
+    // Выполняем запросы параллельно
+    const [notes, totalNotes] = await Promise.all([notesQuery, countQuery]);
 
     const totalPages = Math.ceil(totalNotes / parsedPerPage);
 

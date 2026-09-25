@@ -40,4 +40,4 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-export const User = model('user', userSchema);
+export const User = model('User', userSchema); // <-- ИСПРАВИЛИ здесь имя модели

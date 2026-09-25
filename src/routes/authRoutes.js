@@ -1,5 +1,6 @@
 // src/routes/authRoutes.js
 import { Router } from 'express';
+import { celebrate } from 'celebrate'; // <-- Используем здесь
 import { registerUserSchema, loginUserSchema } from '../validations/authValidation.js';
 import {
   registerUser,
@@ -10,16 +11,10 @@ import {
 
 const router = Router();
 
-// Маршрут регистрации (с валидацией тела запроса)
-router.post('/register', registerUserSchema, registerUser);
-
-// Маршрут логина (с валидацией тела запроса)
-router.post('/login', loginUserSchema, loginUser);
-
-// Маршрут обновления сессии (данные берутся из кук)
+// Оборачиваем схемы в celebrate({ body: ... }) прямо в маршрутах
+router.post('/register', celebrate({ body: registerUserSchema }), registerUser);
+router.post('/login', celebrate({ body: loginUserSchema }), loginUser);
 router.post('/refresh', refreshUserSession);
-
-// Маршрут логаута (данные берутся из кук)
 router.post('/logout', logoutUser);
 
 export default router;

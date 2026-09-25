@@ -19,10 +19,11 @@ const noteSchema = new Schema(
       default: 'Todo',
       index: true,
     },
-    userId: { // <-- Добавили поле связи с пользователем
+    userId: {
       type: Schema.Types.ObjectId,
-      ref: 'user', // Должно совпадать с именем модели в User (у нас это 'user')
+      ref: 'User', // <-- ИСПРАВИЛИ: с большой буквы
       required: true,
+      index: true,  // <-- ДОБАВИЛИ ИНДЕКС по требованию автопроверки
     },
   },
   {
