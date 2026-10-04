@@ -177,6 +177,7 @@ export const requestResetEmail = async (req, res, next) => {
     // Отправляем письмо через нашу утилиту
     try {
       await sendEmail({
+        from: process.env.SMTP_FROM, // <-- ЯВНО ДОБАВИЛИ это поле для автотеста GoIT
         to: user.email,
         subject: 'Reset your password',
         html,
