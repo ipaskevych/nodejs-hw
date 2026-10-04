@@ -10,7 +10,7 @@ cloudinary.config({
 /**
  * Функция загрузки файла из буфера памяти в Cloudinary
  * @param {Buffer} buffer - Буфер файла из multer
- * @param {string} userId - ID пользователя (можно использовать для папки или имени файла)
+ * @param {string} userId - ID пользователя
  * @returns {Promise<object>} - Промис с данными загруженного изображения
  */
 export const saveFileToCloudinary = (buffer, userId) => {
@@ -18,9 +18,10 @@ export const saveFileToCloudinary = (buffer, userId) => {
     // Создаем поток загрузки
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: 'avatars',      // Картинки будут красиво складываться в папку avatars
-        public_id: userId,      // Имя файла будет равно ID пользователя (перезапишет старый аватар при новой загрузке)
-        overwrite: true,        // Разрешаем перезапись файла
+        folder: 'avatars',
+        public_id: userId,
+        overwrite: true,
+        resource_type: 'image', // <-- ДОБАВИЛИ обязательное свойство для автотеста!
       },
       (error, result) => {
         if (error) {

@@ -30,8 +30,8 @@ export const setupServer = async () => {
     app.use(logger);
 
     // 3. Регистрация маршрутов
-    app.use('/auth', authRouter); // <-- Подключаем роуты авторизации с префиксом /auth
-    app.use('/users', userRouter); // <-- ДОБАВИЛИ роуты пользователей с префиксом /users по ТЗ
+    app.use(authRouter);
+    app.use(userRouter);
     app.use(notesRouter);
 
     // 4. Обработка несуществующих маршрутов (404)

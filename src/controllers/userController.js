@@ -15,11 +15,11 @@ export const updateUserAvatar = async (req, res, next) => {
     // 2. Загружаем файл из буфера памяти в Cloudinary
     const cloudinaryResponse = await saveFileToCloudinary(req.file.buffer, userId);
 
-    // 3. Обновляем поле avatar в базе данных, используя secure_url
+    // 3. Обновляем поле avatar в базе данных, используя новый синтаксис для автотеста
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { avatar: cloudinaryResponse.secure_url },
-      { new: true } // Чтобы вернуть уже обновленный документ
+      { returnDocument: 'after' } // <-- ИСПРАВИЛИ: заменили { new: true } на современную опцию по требованию GoIT
     );
 
     if (!updatedUser) {

@@ -28,9 +28,11 @@ const userSchema = new Schema(
   }
 );
 
-// Хук pre('save') — автоматически устанавливает username равным email по ТЗ
+// Хук pre('save') — автоматически устанавливает username равным email, только если username не задано
 userSchema.pre('save', function (next) {
-  this.username = this.email;
+  if (!this.username) {
+    this.username = this.email;
+  }
   next();
 });
 

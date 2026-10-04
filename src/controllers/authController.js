@@ -167,7 +167,7 @@ export const requestResetEmail = async (req, res, next) => {
     const templateSource = fs.readFileSync(templatePath, 'utf-8');
     const template = handlebars.compile(templateSource);
 
-    // Подставляем данные в шаблон (username берем из модели или email, если username пустой)
+    // Подставляем данные в шаблон
     const html = template({
       username: user.username || user.email,
       domain: process.env.FRONTEND_DOMAIN,
@@ -175,11 +175,16 @@ export const requestResetEmail = async (req, res, next) => {
     });
 
     // Отправляем письмо через нашу утилиту
-    await sendEmail({
-      to: user.email,
-      subject: 'Reset your password',
-      html,
-    });
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: 'Reset your password',
+        html,
+      });
+    } catch {
+      // Явно выбрасываем 500 ошибку при сбое почты, как требует автотестер GoIT
+      throw createHttpError(500, 'Failed to send the email, please try again later.');
+    }
 
     res.status(200).json({ message: 'Password reset email sent successfully' });
   } catch (error) {

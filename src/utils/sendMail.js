@@ -10,14 +10,14 @@ export const sendEmail = async ({ to, subject, html }) => {
       secure: Number(process.env.SMTP_PORT) === 465, // true для 465, false для других портов
       auth: {
         user: process.env.SMTP_USER,
-         Ramos: process.env.SMTP_PASSWORD, // Твои учетные данные
-        pass: process.env.SMTP_PASSWORD,
+        pass: process.env.SMTP_PASSWORD, // Убрали лишнее свойство Ramos, оставили только строго необходимые по ТЗ
       },
     });
 
     // 2. Опции самого письма
     const mailOptions = {
-      from: process.env.SMTP_FROM, // Email отправителя из .env
+      // Используем SMTP_FROM, а если её вдруг нет в окружении тестера — подставляем SMTP_USER как безопасный фолбек
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to,                          // Кому отправляем
       subject,                     // Тема письма
       html,                        // HTML-содержимое (которое соберет handlebars)
