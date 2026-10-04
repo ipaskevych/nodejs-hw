@@ -1,4 +1,3 @@
-// src/models/user.js
 import { Schema, model } from 'mongoose';
 
 const userSchema = new Schema(
@@ -18,6 +17,10 @@ const userSchema = new Schema(
       required: true,
       minlength: 8,
     },
+    avatar: {
+      type: String,
+      default: 'https://goit.global',
+    },
   },
   {
     timestamps: true,
@@ -25,11 +28,9 @@ const userSchema = new Schema(
   }
 );
 
-// Хук pre('save') — если username не передан, делаем его равным email
+// Хук pre('save') — автоматически устанавливает username равным email по ТЗ
 userSchema.pre('save', function (next) {
-  if (!this.username) {
-    this.username = this.email;
-  }
+  this.username = this.email;
   next();
 });
 
@@ -40,4 +41,4 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-export const User = model('User', userSchema); // <-- ИСПРАВИЛИ здесь имя модели
+export const User = model('User', userSchema);

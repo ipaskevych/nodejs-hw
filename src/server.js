@@ -1,4 +1,3 @@
-// src/server.js
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -10,6 +9,7 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notesRouter from './routes/notesRoutes.js';
 import authRouter from './routes/authRoutes.js'; // <-- Добавили импорт роутера авторизации
+import userRouter from './routes/userRoutes.js'; // <-- ДОБАВИЛИ импорт роутера пользователей
 
 dotenv.config();
 
@@ -31,6 +31,7 @@ export const setupServer = async () => {
 
     // 3. Регистрация маршрутов
     app.use('/auth', authRouter); // <-- Подключаем роуты авторизации с префиксом /auth
+    app.use('/users', userRouter); // <-- ДОБАВИЛИ роуты пользователей с префиксом /users по ТЗ
     app.use(notesRouter);
 
     // 4. Обработка несуществующих маршрутов (404)
